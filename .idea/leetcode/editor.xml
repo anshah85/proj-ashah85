@@ -3,6 +3,28 @@
   <component name="LeetcodeEditor">
     <option name="projectConfig">
       <map>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1160]Find Words That Can Be Formed by Characters.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[1160]Find Words That Can Be Formed by Characters.md" />
+              <option name="frontendQuestionId" value="leetcode.com1160" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1160]Find Words That Can Be Formed by Characters.java" />
+              <option name="titleSlug" value="find-words-that-can-be-formed-by-characters" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1266]Minimum Time Visiting All Points.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[1266]Minimum Time Visiting All Points.md" />
+              <option name="frontendQuestionId" value="leetcode.com1266" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1266]Minimum Time Visiting All Points.java" />
+              <option name="titleSlug" value="minimum-time-visiting-all-points" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
         <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1424]Diagonal Traverse II.java">
           <value>
             <LeetcodeEditor>
@@ -25,6 +47,17 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1611]Minimum One Bit Operations to Make Integers Zero.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[1611]Minimum One Bit Operations to Make Integers Zero.md" />
+              <option name="frontendQuestionId" value="leetcode.com1611" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1611]Minimum One Bit Operations to Make Integers Zero.java" />
+              <option name="titleSlug" value="minimum-one-bit-operations-to-make-integers-zero" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
         <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1630]Arithmetic Subarrays.java">
           <value>
             <LeetcodeEditor>
@@ -36,6 +69,17 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1662]Check If Two String Arrays are Equivalent.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[1662]Check If Two String Arrays are Equivalent.md" />
+              <option name="frontendQuestionId" value="leetcode.com1662" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1662]Check If Two String Arrays are Equivalent.java" />
+              <option name="titleSlug" value="check-if-two-string-arrays-are-equivalent" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
         <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1685]Sum of Absolute Differences in a Sorted Array.java">
           <value>
             <LeetcodeEditor>
@@ -44,6 +88,28 @@
               <option name="host" value="leetcode.com" />
               <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1685]Sum of Absolute Differences in a Sorted Array.java" />
               <option name="titleSlug" value="sum-of-absolute-differences-in-a-sorted-array" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1688]Count of Matches in Tournament.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[1688]Count of Matches in Tournament.md" />
+              <option name="frontendQuestionId" value="leetcode.com1688" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1688]Count of Matches in Tournament.java" />
+              <option name="titleSlug" value="count-of-matches-in-tournament" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1716]Calculate Money in Leetcode Bank.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[1716]Calculate Money in Leetcode Bank.md" />
+              <option name="frontendQuestionId" value="leetcode.com1716" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[1716]Calculate Money in Leetcode Bank.java" />
+              <option name="titleSlug" value="calculate-money-in-leetcode-bank" />
             </LeetcodeEditor>
           </value>
         </entry>
@@ -124,6 +190,28 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[2147]Number of Ways to Divide a Long Corridor.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[2147]Number of Ways to Divide a Long Corridor.md" />
+              <option name="frontendQuestionId" value="leetcode.com2147" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[2147]Number of Ways to Divide a Long Corridor.java" />
+              <option name="titleSlug" value="number-of-ways-to-divide-a-long-corridor" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[2264]Largest 3-Same-Digit Number in String.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[2264]Largest 3-Same-Digit Number in String.md" />
+              <option name="frontendQuestionId" value="leetcode.com2264" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[2264]Largest 3-Same-Digit Number in String.java" />
+              <option name="titleSlug" value="largest-3-same-digit-number-in-string" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
         <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[2391]Minimum Amount of Time to Collect Garbage.java">
           <value>
             <LeetcodeEditor>
@@ -132,6 +220,17 @@
               <option name="host" value="leetcode.com" />
               <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[2391]Minimum Amount of Time to Collect Garbage.java" />
               <option name="titleSlug" value="minimum-amount-of-time-to-collect-garbage" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[935]Knight Dialer.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/doc/content/[935]Knight Dialer.md" />
+              <option name="frontendQuestionId" value="leetcode.com935" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="/var/folders/zb/bb2fww2s71b9qpx03b0nyfxh0000gn/T/leetcode/editor/en/[935]Knight Dialer.java" />
+              <option name="titleSlug" value="knight-dialer" />
             </LeetcodeEditor>
           </value>
         </entry>
