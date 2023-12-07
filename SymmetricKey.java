@@ -2,6 +2,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.logging.Logger;
@@ -13,6 +14,21 @@ public class SymmetricKey {
 
     public SymmetricKey() {
         this.symmetricKey = generateSymmetricKey();
+    }
+
+    public static String decrypt(String encryptedId, String symmetricKeyString) {
+        try {
+            byte[] decodedSymmetricKeyBytes = Base64.getDecoder().decode(symmetricKeyString);
+            SecretKey symmetricKey = new SecretKeySpec(decodedSymmetricKeyBytes, 0, decodedSymmetricKeyBytes.length, "AES");
+
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
+            byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(encryptedId));
+            return new String(cipherText, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            logger.severe("Failed to decrypt");
+            return null;
+        }
     }
 
     public SecretKey getSymmetricKey() {
