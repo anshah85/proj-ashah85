@@ -103,28 +103,21 @@ public class Bank {
                         byte[] encryptedSymmetricKeyBytes = new byte[encryptedSymmetricKeyLength];
                         dataInputStream.readFully(encryptedSymmetricKeyBytes);
 
-                        // Decrypt the symmetric key using the private key
                         String encryptedSymmetricKeyString = new String(encryptedSymmetricKeyBytes, StandardCharsets.UTF_8);
-                        logger.info("Encrypted symmetric key string: " + encryptedSymmetricKeyString);
                         String symmetricKeyString = decryptWithPrivateKey(encryptedSymmetricKeyString, getPrivateKey());
-                        logger.info("Symmetric key string: " + symmetricKeyString);
 
                         int encryptedIdLength = dataInputStream.readInt();
                         byte[] encryptedIdBytes = new byte[encryptedIdLength];
                         dataInputStream.readFully(encryptedIdBytes);
                         String encryptedId = new String(encryptedIdBytes, StandardCharsets.UTF_8);
-                        logger.info("Encrypted ID: " + encryptedId);
 
                         int encryptedPasswordLength = dataInputStream.readInt();
                         byte[] encryptedPasswordBytes = new byte[encryptedPasswordLength];
                         dataInputStream.readFully(encryptedPasswordBytes);
                         String encryptedPassword = new String(encryptedPasswordBytes, StandardCharsets.UTF_8);
-                        logger.info("Encrypted password: " + encryptedPassword);
 
                         String id = SymmetricKey.decrypt(encryptedId, symmetricKeyString);
                         String password = SymmetricKey.decrypt(encryptedPassword, symmetricKeyString);
-                        logger.info("ID: " + id);
-                        logger.info("Password: " + password);
 
                         String passwordFilePath = "password";
                         String responseMessage = "";
@@ -132,7 +125,6 @@ public class Bank {
                         try {
                             bufferedReader = new BufferedReader(new FileReader(passwordFilePath));
                             if (idAndPasswordMatch(bufferedReader, id, password)) {
-//                                logger.info("ID and password are correct");
                                 responseMessage = "ID and password are correct";
                                 byte[] responseMessageBytes = responseMessage.getBytes(StandardCharsets.UTF_8);
                                 dataOutputStream.writeInt(responseMessage.length());
@@ -145,16 +137,12 @@ public class Bank {
                                     System.out.println("User choice: " + userChoice);
                                     switch (userChoice) {
                                         case 1:
-//                                            logger.info("Starting account transfer");
                                             int recipientIdLength = dataInputStream.readInt();
                                             byte[] recipientIdBytes = new byte[recipientIdLength];
                                             dataInputStream.readFully(recipientIdBytes);
                                             String recipientId = new String(recipientIdBytes, StandardCharsets.UTF_8);
-                                            logger.info("Recipient ID: " + recipientId);
                                             int accountType = dataInputStream.readInt();
-                                            logger.info("Account type: " + accountType);
                                             double amount = dataInputStream.readDouble();
-                                            logger.info("Amount: " + amount);
 
                                             String transferResponse = processAccountTransfer(id, accountType, recipientId, amount);
                                             dataOutputStream.writeUTF(transferResponse);
@@ -172,7 +160,6 @@ public class Bank {
                                     }
                                 }
                             } else {
-                                logger.info("ID and password are incorrect");
                                 responseMessage = "ID and password are incorrect";
                                 byte[] responseMessageBytes = responseMessage.getBytes(StandardCharsets.UTF_8);
                                 dataOutputStream.writeInt(responseMessage.length());
@@ -197,20 +184,14 @@ public class Bank {
         String response = "";
         final String balanceFilePath = "balance";
 
-        // Check if the recipient's ID exists
         if (checkBeneficiaryIDExists(beneficiaryId, balanceFilePath)) {
-            // Load the balances from the file
             Map<String, Map<String, Double>> balances = loadBalancesFromFile(balanceFilePath);
 
-            // Check if the sender's account has sufficient funds
             if (balances.containsKey(id) && hasSufficientFunds(balances.get(id), accountType, amount)) {
-                // Update the sender's balance
                 updateBalance(balances.get(id), accountType, -amount);
 
-                // Update the recipient's balance
                 updateBalance(balances.get(beneficiaryId), accountType, amount);
 
-                // Save the updated balances to the file
                 saveBalancesToFile(balances, balanceFilePath);
 
                 response = "Your transaction is successful";
@@ -286,28 +267,6 @@ public class Bank {
         }
         return false;
     }
-
-//    private boolean checkBeneficiaryIDExists(String beneficiaryId, String balanceFilePath) {
-//        BufferedReader bufferedReader = null;
-//        boolean beneficiaryIdExists = false;
-//        try {
-//            bufferedReader = new BufferedReader(new FileReader(balanceFilePath));
-//            String line = bufferedReader.readLine();
-//            while (line != null) {
-//                String[] accountBalanceArray = line.split(" ");
-//                String accountId = accountBalanceArray[0];
-//
-//                if (beneficiaryId.equals(accountId)) {
-//                    beneficiaryIdExists = true;
-//                }
-//                line = bufferedReader.readLine();
-//            }
-//        } catch (IOException ioException) {
-//            logger.severe("Failed to read account balance file");
-//            ioException.printStackTrace();
-//        }
-//        return beneficiaryIdExists;
-//    }
 
     private String[] fetchAccountBalance(String id) {
         BufferedReader bufferedReader = null;

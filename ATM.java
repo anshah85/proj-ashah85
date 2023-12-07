@@ -12,8 +12,8 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class ATM {
-    private String bankServer;
-    private int bankPort;
+    private final String bankServer;
+    private final int bankPort;
 
     public static final Logger logger = Logger.getLogger(ATM.class.getName());
 
