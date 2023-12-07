@@ -85,7 +85,7 @@ public class ATM {
         }
     }
 
-    private void accountOperationMenu(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream, Scanner scanner) {
+    private void accountOperationMenu(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream, Scanner scanner) throws IOException {
         boolean continueLoop = true;
         while (continueLoop) {
             System.out.println("Choose an operation: ");
@@ -105,11 +105,28 @@ public class ATM {
                     break;
                 case 3:
                     continueLoop = false;
+                    System.out.println("Thank you for using our ATM. Goodbye!");
+                    closeConnection(socket, dataInputStream, dataOutputStream);
                     break;
                 default:
-                    System.out.println("Invalid choice");
-                    break;
+                    System.out.println("Invalid choice. Please try again by entering 1, 2, or 3.");
+                    accountOperationMenu(socket, dataInputStream, dataOutputStream, scanner);
             }
+        }
+    }
+
+    private void closeConnection(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream) {
+        try {
+            logger.info("Closing connection in 3 seconds");
+            dataOutputStream.writeInt(3);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+            dataInputStream.close();
+            socket.close();
+            logger.info("Connection closed");
+        } catch (IOException e) {
+            logger.severe("Failed to send command to bank server");
+            e.printStackTrace();
         }
     }
 
@@ -205,8 +222,25 @@ public class ATM {
     }
 
     public static void main(String[] args) {
-        ATM atm = new ATM("localhost", 1234);
-        atm.run();
+        if (args.length != 2) {
+            System.out.println("Usage: java Cli <host> <port>");
+            System.exit(1);
+        }
 
+        String host = args[0];
+
+        if (host.equals("localhost") || host.isEmpty()) {
+            System.out.println("The host name should not be localhost or empty");
+            System.exit(1);
+        }
+
+        int port = Integer.parseInt(args[1]);
+
+        if (port < 1024 || port > 65535) {
+            System.out.println("The port number should be a user-defined number between 1024 and 65535");
+            System.exit(1);
+        }
+        ATM atm = new ATM(host, port);
+        atm.run();
     }
 }

@@ -2,6 +2,7 @@ import javax.crypto.Cipher;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 
 public class Bank {
     private final int port;
+    private String userId;
 
     String publicKeyFilePath;
     String privateKeyFilePath;
@@ -56,7 +58,17 @@ public class Bank {
 
 
     public static void main(String[] args) {
-        Bank bank = new Bank(1234);
+        if (args.length != 1) {
+            System.out.println("Usage: java Bank <port>");
+            System.exit(1);
+        }
+        int port = Integer.parseInt(args[0]);
+
+        if (port < 1024 || port > 65535) {
+            System.out.println("Invalid port number. Port number must be between 1024 and 65535");
+            System.exit(1);
+        }
+        Bank bank = new Bank(port);
         bank.run();
     }
 
@@ -157,6 +169,9 @@ public class Bank {
                                         case 3:
                                             System.out.println("Disconnecting ATM");
                                             break;
+                                        default:
+                                            System.out.println("Invalid choice");
+                                            break;
                                     }
                                 }
                             } else {
@@ -166,16 +181,52 @@ public class Bank {
                                 dataOutputStream.write(responseMessageBytes);
                                 dataOutputStream.flush();
                             }
+                        } catch (EOFException eofException) {
+                            logger.severe("Connection ended");
+//                    eofException.printStackTrace();
                         } catch (FileNotFoundException e) {
                             logger.severe("Failed to read password file");
                             e.printStackTrace();
+                        } finally {
+                            if (bufferedReader != null) {
+                                try {
+                                    bufferedReader.close();
+                                } catch (IOException e) {
+                                    logger.severe("Failed to close bufferedReader");
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
+                } catch (EOFException eofException) {
+                    logger.severe("Connection ended");
+//                    eofException.printStackTrace();
+                } catch (IOException e) {
+                    logger.severe("Failed to connect to ATM");
+                    e.printStackTrace();
+                } finally {
+                    logger.info("Disconnected from ATM");
                 }
             }
+        } catch (EOFException eofException) {
+            logger.severe("Connection ended");
+            eofException.printStackTrace();
         } catch (IOException e) {
             logger.severe("Failed to start bank server");
-            e.getMessage();
+            e.printStackTrace();
+        }
+    }
+
+    private void closeConnection(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream) {
+        try {
+            logger.info("Closing connection to ATM");
+            dataOutputStream.writeInt(0);
+            socket.close();
+            dataInputStream.close();
+            dataOutputStream.close();
+        } catch (IOException e) {
+            logger.severe("Failed to close connection");
+            e.printStackTrace();
         }
     }
 
@@ -306,6 +357,7 @@ public class Bank {
                 if (id.equals(passwordFileId) && password.equals(passwordFilePassword)) {
                     logger.info("ID and password are correct");
                     isAuthenticated = true;
+                    this.userId = id;
                     break;  // No need to check further once a match is found
                 }
                 line = bufferedReader.readLine();
