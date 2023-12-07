@@ -1,6 +1,4 @@
 import javax.crypto.Cipher;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -30,14 +28,11 @@ public class ATM {
                 DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 logger.info("Connected to bank server");
-//            receive bank's public key
-                int publicKeyLength = dataInputStream.readInt();
 
-                // Receive the public key as a byte array
+                int publicKeyLength = dataInputStream.readInt();
                 byte[] publicKeyBytes = new byte[publicKeyLength];
                 dataInputStream.readFully(publicKeyBytes);
 
-                // Convert the byte array to a PublicKey object
                 PublicKey publicKey = convertBytesToPublicKey(publicKeyBytes);
                 logger.info("Received bank's public key");
 
@@ -74,34 +69,11 @@ public class ATM {
 
                     if (response.equals("ID and password are correct")) {
                         continueLoop = false;
+                        accountOperationMenu(socket, dataInputStream, dataOutputStream, scanner);
+                    } else {
+                        System.out.println("Please try again");
                     }
                 }
-                while (true) {
-                    System.out.println("Please select one of the following actions (enter 1, 2, or 3):");
-                    System.out.println("1. Transfer money");
-                    System.out.println("2. Check account balance");
-                    System.out.println("3. Exit");
-
-                    int choice = scanner.nextInt();
-                    switch (choice) {
-                        case 1:
-                            System.out.println("Transfer money option selected");
-                            // Implement transfer money logic
-                            break;
-                        case 2:
-                            System.out.println("Check account balance option selected");
-                            // Implement check account balance logic
-                            break;
-                        case 3:
-                            System.out.println("Exiting...");
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please enter 1, 2, or 3.");
-                            continue;
-                    }
-                    break;
-                }
-
             } catch (IOException e) {
                 logger.severe("Failed to connect to bank server");
                 e.printStackTrace();
@@ -109,6 +81,99 @@ public class ATM {
 
         } catch (Exception e) {
             logger.severe("Failed to connect to bank server");
+            e.printStackTrace();
+        }
+    }
+
+    private void accountOperationMenu(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream, Scanner scanner) {
+        boolean continueLoop = true;
+        while (continueLoop) {
+            System.out.println("Choose an operation: ");
+            System.out.println("1. Transfer money");
+            System.out.println("2. Check account balance");
+            System.out.println("3. Exit");
+            System.out.println("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    transferMoneyMenu(socket, dataInputStream, dataOutputStream, scanner);
+                    break;
+                case 2:
+                    checkAccountBalanceMenu(socket, dataInputStream, dataOutputStream, scanner);
+                    break;
+                case 3:
+                    continueLoop = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+                    break;
+            }
+        }
+    }
+
+    private void checkAccountBalanceMenu(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream, Scanner scanner) {
+        try {
+            dataOutputStream.writeInt(2);
+            dataOutputStream.flush();
+
+            String savingsAccountBalance = dataInputStream.readUTF();
+            String checkingAccountBalance = dataInputStream.readUTF();
+
+            System.out.println("Savings account balance: " + savingsAccountBalance);
+            System.out.println("Checking account balance: " + checkingAccountBalance);
+        } catch (IOException e) {
+            logger.severe("Failed to send command to bank server");
+            e.printStackTrace();
+        }
+    }
+
+    private void transferMoneyMenu(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream, Scanner scanner) {
+        try {
+            dataOutputStream.writeInt(1);
+            dataOutputStream.flush();
+
+            int accountType;
+            double amount;
+
+            while (true) {
+                System.out.println("Enter the account type you want to transfer money from (1. Savings, 2. Checking): ");
+                accountType = scanner.nextInt();
+                scanner.nextLine();
+
+                if (accountType == 1 || accountType == 2) {
+                    break;  // Exit the loop if a valid account type is entered
+                } else {
+                    System.out.println("Incorrect input. Please enter 1 or 2.");
+                }
+            }
+
+            System.out.println("Enter the recipient's ID: ");
+            String recipientId = scanner.nextLine();
+
+            while (true) {
+                System.out.println("Enter the amount you want to transfer: ");
+                amount = scanner.nextDouble();
+                scanner.nextLine();
+
+                if (amount >= 0) {
+                    break;  // Exit the loop if a valid amount is entered
+                } else {
+                    System.out.println("Invalid amount. Please enter a non-negative value.");
+                }
+            }
+
+            dataOutputStream.writeInt(recipientId.length());
+            dataOutputStream.write(recipientId.getBytes(StandardCharsets.UTF_8));
+            dataOutputStream.writeInt(accountType);
+            dataOutputStream.writeDouble(amount);
+            dataOutputStream.flush();
+
+            String response = dataInputStream.readUTF();
+            System.out.println(response);
+        } catch (IOException e) {
+            logger.severe("Failed to send command to bank server");
             e.printStackTrace();
         }
     }
@@ -134,18 +199,6 @@ public class ATM {
             return Base64.getEncoder().encodeToString(cipherText);
         } catch (Exception e) {
             logger.severe("Failed to encrypt with public key");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private PublicKey convertStringToPublicKey(String publicKeyString) {
-        try {
-            byte[] keyBytes = Base64.getDecoder().decode(publicKeyString);
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-            return KeyFactory.getInstance("RSA").generatePublic(keySpec);
-        } catch (Exception e) {
-            logger.severe("Failed to convert public key string to PublicKey");
             e.printStackTrace();
             return null;
         }
