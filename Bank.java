@@ -2,7 +2,6 @@ import javax.crypto.Cipher;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -17,7 +16,7 @@ import java.util.logging.Logger;
 
 public class Bank {
     private final int port;
-    private String userId;
+
 
     String publicKeyFilePath;
     String privateKeyFilePath;
@@ -68,8 +67,26 @@ public class Bank {
             System.out.println("Invalid port number. Port number must be between 1024 and 65535");
             System.exit(1);
         }
+
         Bank bank = new Bank(port);
-        bank.run();
+        bank.start();
+    }
+
+    private void start() {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server started. Listening on port " + port);
+            while (true) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("Client connected: " + clientSocket.getInetAddress());
+                    new Thread(new BankThread(clientSocket, getPublicKey(), getPrivateKey())).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static PublicKey getPublicKey() {
@@ -94,126 +111,131 @@ public class Bank {
         }
     }
 
+
+}
+
+class BankThread implements Runnable {
+    private final Socket socket;
+    private String userId;
+    Logger logger = Logger.getLogger(BankThread.class.getName());
+    private PublicKey publicKey;
+    private PrivateKey privateKey;
+
+    public BankThread(Socket socket,PublicKey publicKey,PrivateKey privateKey){
+        this.socket = socket;
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
+    }
+
+    @Override
     public void run() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            logger.info("Bank server started");
-            while (true) {
-                try (Socket socket = serverSocket.accept();
-                     DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-                    logger.info("Connected to ATM");
+        while (true) {
+            try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
+                logger.info("Connected to ATM");
 
-                    byte[] publicKeyBytes = convertPublicKeyToBytes(getPublicKey());
-                    dataOutputStream.writeInt(publicKeyBytes.length);
-                    dataOutputStream.write(publicKeyBytes);
-                    dataOutputStream.flush();
+                byte[] publicKeyBytes = convertPublicKeyToBytes(publicKey);
+                dataOutputStream.writeInt(publicKeyBytes.length);
+                dataOutputStream.write(publicKeyBytes);
+                dataOutputStream.flush();
 
-                    boolean isAuthenticated = false;
-                    while (!isAuthenticated) {
-                        int encryptedSymmetricKeyLength = dataInputStream.readInt();
-                        byte[] encryptedSymmetricKeyBytes = new byte[encryptedSymmetricKeyLength];
-                        dataInputStream.readFully(encryptedSymmetricKeyBytes);
+                boolean isAuthenticated = false;
+                while (!isAuthenticated) {
+                    int encryptedSymmetricKeyLength = dataInputStream.readInt();
+                    byte[] encryptedSymmetricKeyBytes = new byte[encryptedSymmetricKeyLength];
+                    dataInputStream.readFully(encryptedSymmetricKeyBytes);
 
-                        String encryptedSymmetricKeyString = new String(encryptedSymmetricKeyBytes, StandardCharsets.UTF_8);
-                        String symmetricKeyString = decryptWithPrivateKey(encryptedSymmetricKeyString, getPrivateKey());
+                    String encryptedSymmetricKeyString = new String(encryptedSymmetricKeyBytes, StandardCharsets.UTF_8);
+                    String symmetricKeyString = decryptWithPrivateKey(encryptedSymmetricKeyString, privateKey);
 
-                        int encryptedIdLength = dataInputStream.readInt();
-                        byte[] encryptedIdBytes = new byte[encryptedIdLength];
-                        dataInputStream.readFully(encryptedIdBytes);
-                        String encryptedId = new String(encryptedIdBytes, StandardCharsets.UTF_8);
+                    int encryptedIdLength = dataInputStream.readInt();
+                    byte[] encryptedIdBytes = new byte[encryptedIdLength];
+                    dataInputStream.readFully(encryptedIdBytes);
+                    String encryptedId = new String(encryptedIdBytes, StandardCharsets.UTF_8);
 
-                        int encryptedPasswordLength = dataInputStream.readInt();
-                        byte[] encryptedPasswordBytes = new byte[encryptedPasswordLength];
-                        dataInputStream.readFully(encryptedPasswordBytes);
-                        String encryptedPassword = new String(encryptedPasswordBytes, StandardCharsets.UTF_8);
+                    int encryptedPasswordLength = dataInputStream.readInt();
+                    byte[] encryptedPasswordBytes = new byte[encryptedPasswordLength];
+                    dataInputStream.readFully(encryptedPasswordBytes);
+                    String encryptedPassword = new String(encryptedPasswordBytes, StandardCharsets.UTF_8);
 
-                        String id = SymmetricKey.decrypt(encryptedId, symmetricKeyString);
-                        String password = SymmetricKey.decrypt(encryptedPassword, symmetricKeyString);
+                    String id = SymmetricKey.decrypt(encryptedId, symmetricKeyString);
+                    String password = SymmetricKey.decrypt(encryptedPassword, symmetricKeyString);
 
-                        String passwordFilePath = "password";
-                        String responseMessage = "";
-                        BufferedReader bufferedReader = null;
-                        try {
-                            bufferedReader = new BufferedReader(new FileReader(passwordFilePath));
-                            if (idAndPasswordMatch(bufferedReader, id, password)) {
-                                responseMessage = "ID and password are correct";
-                                byte[] responseMessageBytes = responseMessage.getBytes(StandardCharsets.UTF_8);
-                                dataOutputStream.writeInt(responseMessage.length());
-                                dataOutputStream.write(responseMessageBytes);
-                                dataOutputStream.flush();
-                                isAuthenticated = true;
+                    String passwordFilePath = "password";
+                    String responseMessage = "";
+                    BufferedReader bufferedReader = null;
+                    try {
+                        bufferedReader = new BufferedReader(new FileReader(passwordFilePath));
+                        if (idAndPasswordMatch(bufferedReader, id, password)) {
+                            responseMessage = "ID and password are correct";
+                            byte[] responseMessageBytes = responseMessage.getBytes(StandardCharsets.UTF_8);
+                            dataOutputStream.writeInt(responseMessage.length());
+                            dataOutputStream.write(responseMessageBytes);
+                            dataOutputStream.flush();
+                            isAuthenticated = true;
 
-                                while (true) {
-                                    int userChoice = dataInputStream.readInt();
-                                    System.out.println("User choice: " + userChoice);
-                                    switch (userChoice) {
-                                        case 1:
-                                            int recipientIdLength = dataInputStream.readInt();
-                                            byte[] recipientIdBytes = new byte[recipientIdLength];
-                                            dataInputStream.readFully(recipientIdBytes);
-                                            String recipientId = new String(recipientIdBytes, StandardCharsets.UTF_8);
-                                            int accountType = dataInputStream.readInt();
-                                            double amount = dataInputStream.readDouble();
+                            while (true) {
+                                int userChoice = dataInputStream.readInt();
+                                System.out.println("User choice: " + userChoice);
+                                switch (userChoice) {
+                                    case 1:
+                                        int recipientIdLength = dataInputStream.readInt();
+                                        byte[] recipientIdBytes = new byte[recipientIdLength];
+                                        dataInputStream.readFully(recipientIdBytes);
+                                        String recipientId = new String(recipientIdBytes, StandardCharsets.UTF_8);
+                                        int accountType = dataInputStream.readInt();
+                                        double amount = dataInputStream.readDouble();
 
-                                            String transferResponse = processAccountTransfer(id, accountType, recipientId, amount);
-                                            dataOutputStream.writeUTF(transferResponse);
-                                            dataOutputStream.flush();
-                                            break;
-                                        case 2:
-                                            String[] accountBalance = fetchAccountBalance(id);
-                                            dataOutputStream.writeUTF(accountBalance[0]);
-                                            dataOutputStream.writeUTF(accountBalance[1]);
-                                            dataOutputStream.flush();
-                                            break;
-                                        case 3:
-                                            System.out.println("Disconnecting ATM");
-                                            break;
-                                        default:
-                                            System.out.println("Invalid choice");
-                                            break;
-                                    }
+                                        String transferResponse = processAccountTransfer(id, accountType, recipientId, amount);
+                                        dataOutputStream.writeUTF(transferResponse);
+                                        dataOutputStream.flush();
+                                        break;
+                                    case 2:
+                                        String[] accountBalance = fetchAccountBalance(id);
+                                        dataOutputStream.writeUTF(accountBalance[0]);
+                                        dataOutputStream.writeUTF(accountBalance[1]);
+                                        dataOutputStream.flush();
+                                        break;
+                                    case 3:
+                                        System.out.println("Disconnecting ATM");
+//                                        closeConnection(socket, dataInputStream, dataOutputStream);
+                                        return;
+                                    default:
+                                        System.out.println("Invalid choice");
+                                        break;
                                 }
-                            } else {
-                                responseMessage = "ID and password are incorrect";
-                                byte[] responseMessageBytes = responseMessage.getBytes(StandardCharsets.UTF_8);
-                                dataOutputStream.writeInt(responseMessage.length());
-                                dataOutputStream.write(responseMessageBytes);
-                                dataOutputStream.flush();
                             }
-                        } catch (EOFException eofException) {
-                            logger.severe("Connection ended");
-//                    eofException.printStackTrace();
-                        } catch (FileNotFoundException e) {
-                            logger.severe("Failed to read password file");
-                            e.printStackTrace();
-                        } finally {
-                            if (bufferedReader != null) {
-                                try {
-                                    bufferedReader.close();
-                                } catch (IOException e) {
-                                    logger.severe("Failed to close bufferedReader");
-                                    e.printStackTrace();
-                                }
+                        } else {
+                            responseMessage = "ID and password are incorrect";
+                            byte[] responseMessageBytes = responseMessage.getBytes(StandardCharsets.UTF_8);
+                            dataOutputStream.writeInt(responseMessage.length());
+                            dataOutputStream.write(responseMessageBytes);
+                            dataOutputStream.flush();
+                        }
+                    } catch (EOFException eofException) {
+                        logger.severe("Connection ended");
+                    } catch (FileNotFoundException e) {
+                        logger.severe("Failed to read password file");
+                        e.printStackTrace();
+                    } finally {
+                        if (bufferedReader != null) {
+                            try {
+                                bufferedReader.close();
+                            } catch (IOException e) {
+                                logger.severe("Failed to close bufferedReader");
+                                e.printStackTrace();
                             }
                         }
                     }
-                } catch (EOFException eofException) {
-                    logger.severe("Connection ended");
-//                    eofException.printStackTrace();
-                } catch (IOException e) {
-                    logger.severe("Failed to connect to ATM");
-                    e.printStackTrace();
-                } finally {
-                    logger.info("Disconnected from ATM");
                 }
+            } catch (EOFException eofException) {
+                logger.severe("Connection ended");
+            } catch (IOException e) {
+                logger.severe("Failed to connect to ATM");
+                e.printStackTrace();
+            } finally {
+                logger.info("Disconnected from ATM");
             }
-        } catch (EOFException eofException) {
-            logger.severe("Connection ended");
-            eofException.printStackTrace();
-        } catch (IOException e) {
-            logger.severe("Failed to start bank server");
-            e.printStackTrace();
         }
     }
 
