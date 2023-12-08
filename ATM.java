@@ -229,10 +229,10 @@ public class ATM {
 
         String host = args[0];
 
-//        if (host.equals("localhost") || host.isEmpty()) {
-//            System.out.println("The host name should not be localhost or empty");
-//            System.exit(1);
-//        }
+        if (host.equals("localhost") || host.isEmpty()) {
+            System.out.println("The host name should not be localhost or empty");
+            System.exit(1);
+        }
 
         int port = Integer.parseInt(args[1]);
 
