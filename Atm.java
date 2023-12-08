@@ -11,13 +11,13 @@ import java.util.Base64;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-public class ATM {
+public class Atm {
     private final String bankServer;
     private final int bankPort;
 
-    public static final Logger logger = Logger.getLogger(ATM.class.getName());
+    public static final Logger logger = Logger.getLogger(Atm.class.getName());
 
-    public ATM(String bankServer, int bankPort) {
+    public Atm(String bankServer, int bankPort) {
         this.bankServer = bankServer;
         this.bankPort = bankPort;
     }
@@ -240,7 +240,7 @@ public class ATM {
             System.out.println("The port number should be a user-defined number between 1024 and 65535");
             System.exit(1);
         }
-        ATM atm = new ATM(host, port);
+        Atm atm = new Atm(host, port);
         atm.run();
     }
 }

@@ -13,7 +13,7 @@
 
 ## Introduction
 
-This repository contains a Java program for a Bank Server and an ATM
+This repository contains a Java program for a Bank Server and an Atm
 Client. The Server and Client communicate using Socket Programming. The
 Client sends user credentials to the Server. The Server validates the
 credentials and sends a message to the Client indicating whether the
@@ -76,7 +76,7 @@ files:
 
 To execute the program, follow these instructions:
 
-### Bank-ATM
+### Bank-Atm
 
 1. Open a terminal or command prompt.
 2. Navigate to the directory containing the Java program.
@@ -85,19 +85,19 @@ To execute the program, follow these instructions:
         make run
 
    This command will compile the Java programs `Bank.java` and
-    `ATM.java`.
+    `Atm.java`.
 4. Run the following command to run the Bank program:
 
         java Bank <port>
 
 5. Run the following command in a separate terminal or command prompt 
-    to run the ATM program:
+    to run the Atm program:
 
-        java ATM <host> <port>
+        java Atm <host> <port>
 
-6. Provide the user's name and password using the prompts on the ATM
+6. Provide the user's name and password using the prompts on the Atm
    once the Bank is started.
-7. The ATM will then display the following options after the user is
+7. The Atm will then display the following options after the user is
     authenticated successfully:
 
     - **Transfer Money**: The user can transfer money either from their 
@@ -106,5 +106,5 @@ To execute the program, follow these instructions:
     - **Check Balance**: The user can check the balance of their savings
       account and checking account.
     - **Exit**: The user can exit the program.
-8. The Bank uses multiple threads to handle multiple ATM clients. The
-    Bank can handle multiple ATM clients simultaneously.
+8. The Bank uses multiple threads to handle multiple Atm clients. The
+    Bank can handle multiple Atm clients simultaneously.
