@@ -76,12 +76,12 @@ public class ATM {
                 }
             } catch (IOException e) {
                 logger.severe("Failed to connect to bank server");
-                e.printStackTrace();
+                e.getMessage();
             }
 
         } catch (Exception e) {
             logger.severe("Failed to connect to bank server");
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
@@ -126,7 +126,7 @@ public class ATM {
             logger.info("Connection closed");
         } catch (IOException e) {
             logger.severe("Failed to send command to bank server");
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
@@ -142,7 +142,7 @@ public class ATM {
             System.out.println("Checking account balance: " + checkingAccountBalance);
         } catch (IOException e) {
             logger.severe("Failed to send command to bank server");
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
@@ -191,7 +191,7 @@ public class ATM {
             System.out.println(response);
         } catch (IOException e) {
             logger.severe("Failed to send command to bank server");
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
@@ -203,7 +203,7 @@ public class ATM {
             return keyFactory.generatePublic(keySpec);
         } catch (Exception e) {
             logger.severe("Failed to convert bytes to public key");
-            e.printStackTrace();
+            e.getMessage();
             return null;
         }
     }
@@ -216,7 +216,7 @@ public class ATM {
             return Base64.getEncoder().encodeToString(cipherText);
         } catch (Exception e) {
             logger.severe("Failed to encrypt with public key");
-            e.printStackTrace();
+            e.getMessage();
             return null;
         }
     }

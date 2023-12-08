@@ -13,8 +13,8 @@ class BankThread implements Runnable {
     private final Socket socket;
     private String userId;
     Logger logger = Logger.getLogger(BankThread.class.getName());
-    private PublicKey publicKey;
-    private PrivateKey privateKey;
+    private final PublicKey publicKey;
+    private final PrivateKey privateKey;
 
     public BankThread(Socket socket,PublicKey publicKey,PrivateKey privateKey){
         this.socket = socket;
@@ -110,14 +110,14 @@ class BankThread implements Runnable {
                         logger.severe("Connection ended");
                     } catch (FileNotFoundException e) {
                         logger.severe("Failed to read password file");
-                        e.printStackTrace();
+                        e.getMessage();
                     } finally {
                         if (bufferedReader != null) {
                             try {
                                 bufferedReader.close();
                             } catch (IOException e) {
                                 logger.severe("Failed to close bufferedReader");
-                                e.printStackTrace();
+                                e.getMessage();
                             }
                         }
                     }
@@ -126,23 +126,10 @@ class BankThread implements Runnable {
                 logger.severe("Connection ended");
             } catch (IOException e) {
                 logger.severe("Failed to connect to ATM");
-                e.printStackTrace();
+                e.getMessage();
             } finally {
                 logger.info("Disconnected from ATM");
             }
-        }
-    }
-
-    private void closeConnection(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream) {
-        try {
-            logger.info("Closing connection to ATM");
-            dataOutputStream.writeInt(0);
-            socket.close();
-            dataInputStream.close();
-            dataOutputStream.close();
-        } catch (IOException e) {
-            logger.severe("Failed to close connection");
-            e.printStackTrace();
         }
     }
 
@@ -256,7 +243,7 @@ class BankThread implements Runnable {
             }
         } catch (IOException ioException) {
             logger.severe("Failed to read account balance file");
-            ioException.printStackTrace();
+            ioException.getMessage();
         }
         return accountBalance;
     }
@@ -280,7 +267,7 @@ class BankThread implements Runnable {
             }
         } catch (IOException ioException) {
             logger.severe("Failed to read password file");
-            ioException.printStackTrace();
+            ioException.getMessage();
         }
         return isAuthenticated;
     }

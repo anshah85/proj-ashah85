@@ -1,23 +1,16 @@
-import javax.crypto.Cipher;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class Bank {
     private final int port;
-
-
     String publicKeyFilePath;
     String privateKeyFilePath;
     private static PublicKey publicKey;
@@ -81,11 +74,11 @@ public class Bank {
                     System.out.println("Client connected: " + clientSocket.getInetAddress());
                     new Thread(new BankThread(clientSocket, getPublicKey(), getPrivateKey())).start();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.getMessage();
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
