@@ -15,8 +15,32 @@
 
 This repository contains a Java program for a Bank Server and an ATM
 Client. The Server and Client communicate using Socket Programming. The
-Bank Server validates the ATM Client using a public key certificate. The
-ATM Client validates the Bank Server using a public key certificate. The
+Client sends user credentials to the Server. The Server validates the
+credentials and sends a message to the Client indicating whether the
+credentials are valid or not. The Server has a public key certificate
+and a private key. The Server first sends the public key certificate to
+the Client. The Client uses the public key certificate to and sends an 
+encryptedSymmetricKey to the Server. The Server uses the private key to
+decrypt the encryptedSymmetricKey. The Server and Client then use the
+symmetric key to encrypt and decrypt the messages sent between them.
+The client then sends the encrypted userID and password to the Server.
+The Server decrypts the userID and password and validates them. The
+Server then sends a message to the Client indicating whether the
+credentials are valid or not. The Server also has a `password` file
+which contains the userID and password. The Server uses the `password`
+file to validate the userID and password. The Server also has a
+`balance` file which contains the userID and their savings account 
+and checking account balances. The Server uses the `balance` file to
+retrieve the balances of the user's savings account and checking account.
+Once the Client is authenticated, the Client can perform the following
+operations:
+
+1. **Transfer Money**: The Client can transfer money either from their 
+savings account to other user's savings account or from their checking
+account to other user's checking account. 
+2. **Check Balance**: The Client can check the balance of their savings
+account and checking account.
+3. **Exit**: The Client can exit the program.
 
 ## Author
 
@@ -29,11 +53,30 @@ ATM Client validates the Bank Server using a public key certificate. The
 - **Language**: Java
 - **Tested on Remote Server**: Yes
 
+### Code for performing encryption and decryption
+
+The code for performing encryption and decryption is in the following
+files:
+
+1. Symmetric Encryption and Decryption: `SymmetricEncryption.java`
+2. Algorithm used: AES
+3. Public Key has been generated using the following command:
+
+        openssl rsa -pubout -in src/private_key.pem -out src/public_key.pem
+4. Private Key has been generated using the following command:
+
+        openssl pkcs8 -topk8 -inform PEM -outform PEM -in private_key.pem -out private_key_pkcs8.pem -nocrypt
+5. The public key is stored in the file `public_key.pem`.
+6. The private key is stored in the file `private_key_pkcs8.pem`.
+7. The algorithm used for Public Key Encryption and Decryption is RSA.
+8. The algorithm used for Symmetric Key Encryption and Decryption is AES.
+9. The algorithm used for Private Key Encryption and Decryption is RSA.
+
 ## Execution Instructions
 
 To execute the program, follow these instructions:
 
-### GenPasswd
+### Bank-ATM
 
 1. Open a terminal or command prompt.
 2. Navigate to the directory containing the Java program.
@@ -41,68 +84,27 @@ To execute the program, follow these instructions:
 
         make run
 
-   This command will compile the Java program `GenPasswd.java` and
-   execute it. The program will prompt the user to enter the userID
-   and password. The program will then store the userID and password
-   in the `hashpasswd` file. Then, the command will compile the Java
-   programs `Serv.java` and `Cli.java`.
+   This command will compile the Java programs `Bank.java` and
+    `ATM.java`.
+4. Run the following command to run the Bank program:
 
-### Client-Server
+        java Bank <port>
 
-1. Open a terminal or command prompt.
-2. Navigate to the directory containing the Java program.
-3. Run the following command to start the Server:
+5. Run the following command in a separate terminal or command prompt 
+    to run the ATM program:
 
-        java Serv <port>
-4. Open another terminal and navigate to the directory containing the
-   Java program.
-5. Run the following command to start the Client:
+        java ATM <host> <port>
 
-        java Cli <host> <port>
-6. Provide the user's name and password using the prompts on the Client
-   once the Server is started.
+6. Provide the user's name and password using the prompts on the ATM
+   once the Bank is started.
+7. The ATM will then display the following options after the user is
+    authenticated successfully:
 
-## Code Overview
-
-The Java programs `GenPasswd.java`, `Serv.java`, and `Cli.java` contain
-the following features:
-
-1. **Input Validation**: The program checks for the following error
-   conditions:
-
-    - The userID contains characters other than lowercase letters    
-      (a-z).
-    - The password contains at least 8 characters.
-    - The userID does not exist in the hashpsswd file.
-
-2. **SHA-256 Encoding**: The program uses the SHA-256 algorithm to
-   encode the password.
-
-3. **Password Generation**: The program generates a password using the
-   encoded password and the userID.
-
-4. **Server-Client Communication**: The program uses SSL to communicate
-   between the Server and the Client. The Server validates the password
-   and sends a message to the Client indicating whether the password is
-   correct or not.
-
-5. **Public Key Certificate**: The program uses a public key certificate
-   to validate the Server.
-
-6. **hashpasswd File**: The program uses the `hashpasswd` file to validate
-   the userID and password.I have included a sample `hashpasswd` file in
-   the repository.
-7. **keystore.p12**: The program uses the `keystore.p12` file to
-   validate the Server.
-8. **truststore.p12**: The program uses the `truststore.p12` file to
-   validate the Client.
-9. **server.cer**: The program uses the `server.cer` file to validate
-   the Server.
-
-## Additional Function
-
-The program also contains a `Makefile` which can be used to compile and
-run the program. The `Makefile` contains the following commands:
-
-- `make run`: Compiles and runs the program.
-- `make clean`: Removes the class files.
+    - **Transfer Money**: The user can transfer money either from their 
+      savings account to other user's savings account or from their 
+      checking account to other user's checking account. 
+    - **Check Balance**: The user can check the balance of their savings
+      account and checking account.
+    - **Exit**: The user can exit the program.
+8. The Bank uses multiple threads to handle multiple ATM clients. The
+    Bank can handle multiple ATM clients simultaneously.
