@@ -4,4 +4,4 @@ clean:
 run:
 	rm -rf *.class
 	javac Bank.java
-	javac ATM.java
+	javac Atm.java
